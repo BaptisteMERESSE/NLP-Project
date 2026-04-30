@@ -6,19 +6,14 @@ from code.load_data import df_final
 
 # python -m code.descriptive_statistics
 
-# Configuration esthétique
 sns.set_theme(style="whitegrid")
 plt.rcParams.update({'font.size': 12})
 GRAPHS_FOLDER.mkdir(parents=True, exist_ok=True)
 
-# Calcul préalable : Création de la colonne du nombre de mots
 df_final['word_count'] = df_final['text'].apply(lambda x: len(str(x).split()))
 
 print("Génération des statistiques descriptives (3 graphiques)...")
 
-# ==========================================
-# Graphique 1 : Évolution temporelle
-# ==========================================
 plt.figure(figsize=(10, 5))
 sns.countplot(data=df_final, x='date', color='steelblue')
 plt.title("1. Volume de professions de foi par année électorale")
@@ -29,9 +24,6 @@ plt.tight_layout()
 plt.savefig(GRAPHS_FOLDER / "1_evolution_temporelle.png", dpi=300)
 plt.close()
 
-# ==========================================
-# Graphique 2 : Le paysage politique
-# ==========================================
 plt.figure(figsize=(10, 8))
 top_partis = df_final['titulaire-soutien'].value_counts().nlargest(15).index
 sns.countplot(
@@ -49,9 +41,6 @@ plt.tight_layout()
 plt.savefig(GRAPHS_FOLDER / "2_repartition_partis.png", dpi=300)
 plt.close()
 
-# ==========================================
-# Graphique 3 : Distribution de la longueur des textes (Ancien n°4)
-# ==========================================
 plt.figure(figsize=(10, 5))
 sns.histplot(data=df_final, x='word_count', bins=50, kde=True, color='purple')
 plt.title("3. Distribution de la longueur des professions de foi")
@@ -62,9 +51,6 @@ plt.tight_layout()
 plt.savefig(GRAPHS_FOLDER / "3_distribution_mots.png", dpi=300)
 plt.close()
 
-# ==========================================
-# Graphique 4 : Composition politique par année (Barres empilées)
-# ==========================================
 plt.figure(figsize=(12, 6))
 TOP_X = 8
 top_partis_stack = df_final['titulaire-soutien'].value_counts().nlargest(TOP_X).index
