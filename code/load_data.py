@@ -1,9 +1,7 @@
 import pandas as pd
-from pathlib import Path
 from paths import METADATA_PATH, DATA_FOLDER
 
 # python -m code.load_data
-
 
 colonnes_utiles = [
     'id', 
@@ -14,9 +12,11 @@ colonnes_utiles = [
     'titulaire-sexe'
 ]
 
-df_meta = pd.read_csv(METADATA_PATH, usecols=colonnes_utiles)
+print("Chargement des métadonnées...")
+df_meta = pd.read_csv(METADATA_PATH, usecols=colonnes_utiles, low_memory=False)
 all_texts = []
 
+print("Chargement des textes...")
 for file_path in DATA_FOLDER.glob("**/*.txt"):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
@@ -31,6 +31,7 @@ for file_path in DATA_FOLDER.glob("**/*.txt"):
 
 df_texts = pd.DataFrame(all_texts)
 
+# Fusion (Inner join pour ne garder que les textes qui ont bien une ligne de métadonnée)
 df_final = pd.merge(
     df_texts, 
     df_meta, 
@@ -39,4 +40,12 @@ df_final = pd.merge(
     how="inner"
 )
 
-print(f"Nombre de documents analysables: {len(df_final)}")
+nb_final = len(df_final)
+
+# --- Affichage clair du résumé ---
+print("\n=== RÉSUMÉ DU CHARGEMENT DES DONNÉES ===")
+print(f"Textes trouvés dans les dossiers : {len(df_texts)}")
+print(f"Métadonnées correspondantes      : {len(df_meta)}")
+print("----------------------------------------")
+print(f"Nombre total de documents conservés pour l'entraînement LDA : {nb_final}")
+print("========================================\n")
